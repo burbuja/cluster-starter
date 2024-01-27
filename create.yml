@@ -1,0 +1,87 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+  - name: Create a directory for files
+    ansible.builtin.file:
+      path: files
+      state: directory
+  - name: Download Ubuntu if necessary
+    ansible.builtin.get_url:
+      url: "{{ ubuntu_ova_remote_path }}"
+      dest: "{{ ubuntu_ova_local_path }}"
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: Create VM from OVA
+    community.vmware.vmware_deploy_ovf:
+      hostname: "{{ external_vsphere_vcenter_ip }}"
+      username: "{{ external_vsphere_user }}"
+      password: "{{ external_vsphere_password }}"
+      validate_certs: "{{ not external_vsphere_insecure }}"
+      name: "{{ inventory_hostname }}"
+      networks:
+        "{u'VM Network':u'{{ vm_network_0 }}'}"
+      datastore: "{{ vm_datastore }}"
+      ovf: "{{ ubuntu_ova_local_path }}"
+      power_on: no
+      wait_for_ip_address: no
+    delegate_to: localhost
+  - name: Change VM settings
+    community.vmware.vmware_guest:
+      hostname: "{{ external_vsphere_vcenter_ip }}"
+      username: "{{ external_vsphere_user }}"
+      password: "{{ external_vsphere_password }}"
+      validate_certs: "{{ not external_vsphere_insecure }}"
+      name: "{{ inventory_hostname }}"
+      hardware:
+        memory_mb: "{{ vm_memory_mb }}"
+        num_cpus: "{{ vm_num_cpus }}"
+        version: "{{ vm_hardware_version }}"
+      disk:
+      - size_gb: "{{ vm_disk_size_gb_0 }}"
+      advanced_settings:
+      - key: guestinfo.userdata
+        value: "{{ lookup('ansible.builtin.template', 'user-data.j2') | b64encode }}"
+      - key: guestinfo.userdata.encoding
+        value: base64
+      - key: guestinfo.metadata
+        value: "{{ lookup('ansible.builtin.template', 'meta-data.j2') | b64encode }}"
+      - key: guestinfo.metadata.encoding
+        value: base64
+    delegate_to: localhost
+  - name: Add a new disk
+    community.vmware.vmware_guest_disk:
+      hostname: "{{ external_vsphere_vcenter_ip }}"
+      username: "{{ external_vsphere_user }}"
+      password: "{{ external_vsphere_password }}"
+      validate_certs: "{{ not external_vsphere_insecure }}"
+      name: "{{ inventory_hostname }}"
+      datacenter: "{{ external_vsphere_datacenter }}"
+      disk:
+      - size_gb: "{{ vm_disk_size_gb_1 }}"
+        type: thin
+        scsi_controller: 0
+        scsi_type: paravirtual
+        unit_number: 1
+    delegate_to: localhost
+  - name: Add a new NIC
+    community.vmware.vmware_guest_network:
+      hostname: "{{ external_vsphere_vcenter_ip }}"
+      username: "{{ external_vsphere_user }}"
+      password: "{{ external_vsphere_password }}"
+      validate_certs: "{{ not external_vsphere_insecure }}"
+      name: "{{ inventory_hostname }}"
+      network_name: "{{ vm_network_1 }}"
+      connected: true
+      state: present
+    delegate_to: localhost
+  - name: Power on VM
+    community.vmware.vmware_guest:
+      hostname: "{{ external_vsphere_vcenter_ip }}"
+      username: "{{ external_vsphere_user }}"
+      password: "{{ external_vsphere_password }}"
+      validate_certs: "{{ not external_vsphere_insecure }}"
+      name: "{{ inventory_hostname }}"
+      state: poweredon
+    delegate_to: localhost
