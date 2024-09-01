@@ -10,8 +10,10 @@ network:
       gateway4: {{ vm_gateway_0 }}
       nameservers:
         addresses: [{{ vm_dns_0 }}]
+{% if hostvars[inventory_hostname].ansible_host != hostvars[inventory_hostname].ip %}
     ens224:
       dhcp4: False
       dhcp6: False
       addresses:
         - {{ hostvars[inventory_hostname].ip }}/{{ vm_mask_1 }}
+{% endif %}

@@ -1,0 +1,9 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: Add the RBD module and make sure it is loaded after reboots
+    community.general.modprobe:
+      name: rbd
+      state: present
+      persistent: present

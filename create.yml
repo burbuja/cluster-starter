@@ -75,6 +75,7 @@
       network_name: "{{ vm_network_1 }}"
       connected: true
       state: present
+    when: hostvars[inventory_hostname].ansible_host != hostvars[inventory_hostname].ip
     delegate_to: localhost
   - name: Power on VM
     community.vmware.vmware_guest:
