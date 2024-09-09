@@ -120,8 +120,8 @@ vm_mask_0: 24
 # vm_mask_1: 24 # (optional) 
 vm_gateway_0: 10.10.1.1
 vm_dns_0: 8.8.8.8
-vm_keyboard_layout: latam
-vm_timezone: America/Santiago
+vm_keyboard_layout: en # en, es, latam...
+vm_timezone: Etc/UTC # Etc/UTC, America/New_York, Europe/Madrid, America/Santiago...
 vm_gecos: User
 ansible_user: user
 ansible_ssh_pass: changeme
