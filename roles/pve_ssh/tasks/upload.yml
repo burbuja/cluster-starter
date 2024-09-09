@@ -1,0 +1,6 @@
+---
+- name: "Upload Ubuntu to PVE server"
+  ansible.builtin.copy:
+    src: "{{ ubuntu_img_local_path }}"
+    dest: "/tmp/"
+  register: ubuntu_img_remote

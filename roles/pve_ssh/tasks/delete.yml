@@ -1,0 +1,5 @@
+
+---
+- name: "Delete VM on PVE server"
+  ansible.builtin.shell:
+    cmd: "qm destroy {{ vm_id }}"

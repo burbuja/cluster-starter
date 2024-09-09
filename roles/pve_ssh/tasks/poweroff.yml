@@ -1,0 +1,4 @@
+---
+- name: "Power off VMs on PVE server"
+  ansible.builtin.shell:
+    cmd: "qm stop {{ vm_id }}"

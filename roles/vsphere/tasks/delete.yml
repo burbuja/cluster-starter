@@ -1,0 +1,9 @@
+---
+- name: "Delete VMs on vSphere"
+  community.vmware.vmware_guest:
+    hostname: "{{ external_vsphere_vcenter_ip }}"
+    username: "{{ external_vsphere_user }}"
+    password: "{{ external_vsphere_password }}"
+    validate_certs: "{{ not external_vsphere_insecure }}"
+    name: "{{ inventory_hostname }}"
+    state: "absent"

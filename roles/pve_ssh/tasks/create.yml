@@ -1,0 +1,12 @@
+---
+- name: "Get next ID"
+  ansible.builtin.shell:
+    cmd: pvesh get /cluster/nextid
+  register: vm_next_id
+- name: "Assign next ID"
+  ansible.builtin.set_fact:
+    vm_id: "{{ vm_next_id.stdout }}"
+  when: "vm_id == '0'"
+- name: "Create VM"
+  ansible.builtin.shell:
+    cmd: qm create {{ vm_id }} --name {{ inventory_hostname }} --memory {{ vm_memory_mb }} --net0 virtio,bridge={{ vm_network_0 }} --scsihw virtio-scsi-pci

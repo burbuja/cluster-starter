@@ -1,0 +1,38 @@
+---
+- name: "Import Ubuntu"
+  ansible.builtin.shell:
+    cmd: "qm set {{ vm_id }} --scsi0 {{ vm_datastore }}:0,import-from={{ hostvars['localhost'].ubuntu_img_remote.path }}"
+- name: "Resize disk"
+  ansible.builtin.shell:
+    cmd: "qm resize {{ vm_id }} scsi0 {{ vm_disk_size_gb_0 }}G"
+- name: "Set bootable disk"
+  ansible.builtin.shell:
+    cmd: "qm set {{ vm_id }} --boot order=scsi0"
+- name: "Create directory if it doesn't exist"
+  ansible.builtin.file:
+    path: "/var/lib/vz/snippets/"
+    state: "directory"
+  run_once: true
+- name: "Copy cloud-init files"
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - src: "templates/meta-data.j2"
+      dest: "/var/lib/vz/snippets/{{ inventory_hostname }}_meta-data.yml"
+    - src: "templates/user-data.j2"
+      dest: "/var/lib/vz/snippets/{{ inventory_hostname }}_user-data.yml"
+- name: "Create CD-ROM for cloud-init"
+  ansible.builtin.shell:
+    cmd: "qm set {{ vm_id }} --ide2 {{ vm_datastore }}:cloudinit"
+- name: "Set cloud-init"
+  ansible.builtin.shell:
+    cmd: "qm set {{ vm_id }} --cicustom 'user=local:snippets/{{ inventory_hostname }}_user-data.yml,meta=local:snippets/{{ inventory_hostname }}_meta-data.yml,network=local:snippets/{{ inventory_hostname }}_meta-data.yml'"
+- name: "Add a new disk"
+  ansible.builtin.shell:
+    cmd: "qm set {{ vm_id }} --scsi1 {{ vm_datastore }}:{{ vm_disk_size_gb_1 }}"
+  when: "vm_disk_size_gb_1 is defined"
+- name: "Add a new NIC"
+  ansible.builtin.shell:
+    cmd: "qm set {{ vm_id }} --net1 virtio,bridge={{ vm_network_1 }}"
+  when: "hostvars[inventory_hostname].ansible_host != hostvars[inventory_hostname].ip"

@@ -1,0 +1,10 @@
+---
+- name: "Get VM list"
+  ansible.builtin.shell:
+    cmd: "pvesh get /cluster/resources --type vm --output-format json"
+  register: vm_list
+- name: "Parse VM list"
+  ansible.builtin.set_fact:
+    vm_id: "{{ vm_list.stdout | ansible.builtin.from_json | community.general.json_query(query) | first | default(0) }}"
+  vars:
+    query: "[?name=='{{ inventory_hostname }}'].vmid"

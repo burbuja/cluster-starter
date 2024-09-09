@@ -1,13 +1,9 @@
 ---
-- hosts: all
+- name: "Power off VMs"
+  hosts: "all"
   gather_facts: no
-  tasks:
-  - name: Power off VM
-    community.vmware.vmware_guest:
-      hostname: "{{ external_vsphere_vcenter_ip }}"
-      username: "{{ external_vsphere_user }}"
-      password: "{{ external_vsphere_password }}"
-      validate_certs: "{{ not external_vsphere_insecure }}"
-      name: "{{ inventory_hostname }}"
-      state: poweredoff
-    delegate_to: localhost
+  vars:
+    cc_action: "poweroff"
+  roles:
+    - { role: vsphere, when: cc_hypervisor == 'vsphere' }
+    - { role: pve_ssh, when: cc_hypervisor == 'pve_ssh' }

@@ -1,14 +1,13 @@
 #cloud-config
 users:
-  - default
-  - name: {{ ansible_user }}
+  - name: {{ cc_os_user }}
     gecos: {{ vm_gecos }}
     groups: [adm, audio, cdrom, dialout, dip, floppy, lxd, netdev, plugdev, sudo, video]
     shell: /bin/bash
     sudo: ["ALL=(ALL) NOPASSWD:ALL"]
-    plain_text_passwd: {{ ansible_ssh_pass }}
+    plain_text_passwd: {{ cc_os_pass }}
     lock_passwd: False
 ssh_pwauth: True
 keyboard:
-  layout: latam
-timezone: America/Santiago
+  layout: {{ vm_keyboard_layout }}
+timezone: {{ vm_timezone }}

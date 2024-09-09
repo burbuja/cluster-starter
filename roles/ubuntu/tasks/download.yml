@@ -1,0 +1,9 @@
+---
+- name: Create a directory for files
+  ansible.builtin.file:
+    path: files
+    state: directory
+- name: Download Ubuntu if necessary
+  ansible.builtin.get_url:
+    url: "{{ ubuntu_ova_remote_path }}"
+    dest: "{{ ubuntu_ova_local_path }}"

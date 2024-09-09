@@ -1,0 +1,68 @@
+---
+- name: "Set facts for cloud-init"
+  ansible.builtin.set_fact:
+    cc_os_user: "{{ ansible_user }}"
+    cc_os_pass: "{{ ansible_ssh_pass }}"
+  when: cc_action == "create"
+- name: "Get VM ID from PVE server"
+  include_tasks: getvmid.yml
+  vars:
+    ansible_user: "{{ pve_user }}"
+    ansible_ssh_pass: "{{ pve_pass }}"
+  args:
+    apply:
+      delegate_to: "{{ pve_host }}"
+- name: "Upload file to PVE server"
+  include_tasks: upload.yml
+  vars:
+    ansible_user: "{{ pve_user }}"
+    ansible_ssh_pass: "{{ pve_pass }}"
+  args:
+    apply:
+      delegate_to: "{{ pve_host }}"
+  when: cc_action == "upload"
+- name: "Create VM on PVE server"
+  include_tasks: create.yml
+  vars:
+    ansible_user: "{{ pve_user }}"
+    ansible_ssh_pass: "{{ pve_pass }}"
+  args:
+    apply:
+      delegate_to: "{{ pve_host }}"
+  when: cc_action == "create"
+- name: "Modify VM on PVE server"
+  include_tasks: modify.yml
+  vars:
+    ansible_user: "{{ pve_user }}"
+    ansible_ssh_pass: "{{ pve_pass }}"
+  args:
+    apply:
+      delegate_to: "{{ pve_host }}"
+  when: cc_action == "create"
+- name: "Power on VM on PVE server"
+  include_tasks: poweron.yml
+  vars:
+    ansible_user: "{{ pve_user }}"
+    ansible_ssh_pass: "{{ pve_pass }}"
+  args:
+    apply:
+      delegate_to: "{{ pve_host }}"
+  when: cc_action == "poweron" or cc_action == "create"
+- name: "Power off VM on PVE server"
+  include_tasks: poweroff.yml
+  vars:
+    ansible_user: "{{ pve_user }}"
+    ansible_ssh_pass: "{{ pve_pass }}"
+  args:
+    apply:
+      delegate_to: "{{ pve_host }}"
+  when: cc_action == "poweroff" or cc_action == "delete"
+- name: "Delete VM on PVE server"
+  include_tasks: delete.yml
+  vars:
+    ansible_user: "{{ pve_user }}"
+    ansible_ssh_pass: "{{ pve_pass }}"
+  args:
+    apply:
+      delegate_to: "{{ pve_host }}"
+  when: cc_action == "delete"
