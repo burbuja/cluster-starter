@@ -9,4 +9,4 @@
   when: "vm_id == '0'"
 - name: "Create VM"
   ansible.builtin.shell:
-    cmd: qm create {{ vm_id }} --name {{ inventory_hostname }} --memory {{ vm_memory_mb }} --net0 virtio,bridge={{ vm_network_0 }} --scsihw virtio-scsi-pci
+    cmd: qm create {{ vm_id }} --name {{ inventory_hostname }} --sockets {{ vm_num_cpus }} --memory {{ vm_memory_mb }} --net0 virtio,bridge={{ vm_network_0 }} --scsihw virtio-scsi-pci
