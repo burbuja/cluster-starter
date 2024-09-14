@@ -24,7 +24,7 @@ python3 -m venv venv
 source venv/bin/activate
 
 # Clone Cluster Starter and Kubespray repositories
-git clone --single-branch --branch v0.2.0 https://github.com/burbuja/cluster-starter.git
+git clone --single-branch --branch v0.2.1 https://github.com/burbuja/cluster-starter.git
 git clone --single-branch --branch v2.24.0 https://github.com/kubernetes-sigs/kubespray.git
 
 # Install requirements
