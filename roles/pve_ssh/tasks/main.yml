@@ -38,7 +38,7 @@
   args:
     apply:
       delegate_to: "{{ pve_host }}"
-  when: cc_action == "create"
+  when: cc_action == "modify"
 - name: "Power on VM on PVE server"
   include_tasks: poweron.yml
   vars:
@@ -47,7 +47,7 @@
   args:
     apply:
       delegate_to: "{{ pve_host }}"
-  when: cc_action == "poweron" or cc_action == "create"
+  when: cc_action == "poweron" or cc_action == "modify"
 - name: "Power off VM on PVE server"
   include_tasks: poweroff.yml
   vars:

@@ -1,0 +1,93 @@
+---
+- name: "Copy VHDX file"
+  ansible.windows.win_copy:
+    src: "{{ hostvars['localhost']['ubuntu_vhdx_remote']['dest'] }}\\{{ hostvars['localhost']['ubuntu_vhdx_remote']['original_basename'] }}"
+    dest: "{{ vm_datastore }}\\{{ inventory_hostname }}.vhdx"
+    remote_src: yes
+- name: "Create VM"
+  ansible.windows.win_powershell:
+    script: |
+      param(
+          [string]$VMName,
+          [string]$VMMemory,
+          [string]$VMSwitch,
+          [string]$VHDPath
+      )
+      New-VM -Name $VMName -MemoryStartupBytes $VMMemory -Generation 1 -Switch $VMSwitch -VHDPath $VHDPath
+    parameters:
+      VMName: "{{ inventory_hostname }}"
+      VMMemory: "{{ vm_memory_mb * 1024 * 1024 }}"
+      VMSwitch: "{{ vm_network_0 }}"
+      VHDPath: "{{ vm_datastore }}\\{{ inventory_hostname }}.vhdx"
+- name: "Set CPU number"
+  ansible.windows.win_powershell:
+    script: |
+      param(
+          [string]$VMName,
+          [string]$VMProcessorCount
+      )
+      Set-VM -Name $VMName -ProcessorCount $VMProcessorCount
+    parameters:
+      VMName: "{{ inventory_hostname }}"
+      VMProcessorCount: "{{ vm_num_cpus }}"
+- name: "Resize disk"
+  ansible.windows.win_powershell:
+    script: |
+      param(
+          [string]$VHDPath,
+          [string]$VHDSizeBytes
+      )
+      Resize-VHD -Path $VHDPath -SizeBytes $VHDSizeBytes
+    parameters:
+      VHDPath: "{{ vm_datastore }}\\{{ inventory_hostname }}.vhdx"
+      VHDSizeBytes: "{{ vm_disk_size_gb_0 * 1024 * 1024 * 1024 }}"
+- name: "Upload cloud-init ISO file"
+  ansible.windows.win_copy:
+    src: "files/{{ inventory_hostname }}_cidata.iso"
+    dest: "{{ vm_datastore }}\\{{ inventory_hostname }}_cidata.iso"
+- name: "Attach cloud-init ISO file to VM"
+  ansible.windows.win_powershell:
+    script: |
+      param(
+          [string]$VMName,
+          [string]$VMDvdDrivePath
+      )
+      Set-VMDvdDrive -VMName $VMName -Path $VMDvdDrivePath
+    parameters:
+      VMName: "{{ inventory_hostname }}"
+      VMDvdDrivePath: "{{ vm_datastore }}\\{{ inventory_hostname }}_cidata.iso"
+- name: "Add a new disk"
+  ansible.windows.win_powershell:
+    script: |
+      param(
+          [string]$VHDPath,
+          [string]$VHDSizeBytes
+      )
+      New-VHD -Path $VHDPath -SizeBytes $VHDSizeBytes
+    parameters:
+      VHDPath: "{{ vm_datastore }}\\{{ inventory_hostname }}_1.vhdx"
+      VHDSizeBytes: "{{ vm_disk_size_gb_1 * 1024 * 1024 * 1024 }}"
+  when: "vm_disk_size_gb_1 is defined"
+- name: "Attach new disk to VM"
+  ansible.windows.win_powershell:
+    script: |
+      param(
+          [string]$VMName,
+          [string]$VHDPath
+      )
+      Add-VMHardDiskDrive -VMName $VMName -Path $VHDPath
+    parameters:
+      VMName: "{{ inventory_hostname }}"
+      VHDPath: "{{ vm_datastore }}\\{{ inventory_hostname }}_1.vhdx"
+- name: "Add a new NIC"
+  ansible.windows.win_powershell:
+    script: |
+      param(
+          [string]$VMName,
+          [string]$VMNetworkAdapterSwitchName
+      )
+      Add-VMNetworkAdapter -VMName $VMName -SwitchName $VMNetworkAdapterSwitchName
+    parameters:
+      VMName: "{{ inventory_hostname }}"
+      VMNetworkAdapterSwitchName: "{{ vm_network_1 }}"
+  when: "hostvars[inventory_hostname].ansible_host != hostvars[inventory_hostname].ip"

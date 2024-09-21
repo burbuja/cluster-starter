@@ -1,0 +1,10 @@
+---
+- name: "Power off VM on Hyper-V server"
+  ansible.windows.win_powershell:
+    script: |
+      param(
+          [string]$VMName
+      )
+      Stop-VM -Name $VMName
+    parameters:
+      VMName: "{{ inventory_hostname }}"

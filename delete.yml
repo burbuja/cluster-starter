@@ -9,5 +9,6 @@
   vars:
     cc_action: "delete"
   roles:
-    - { role: vsphere, when: cc_hypervisor == 'vsphere' and (delete_cluster | bool) }
+    - { role: hyperv_ssh, when: cc_hypervisor == 'hyperv_ssh' and (delete_cluster | bool) }
     - { role: pve_ssh, when: cc_hypervisor == 'pve_ssh' and (delete_cluster | bool) }
+    - { role: vsphere, when: cc_hypervisor == 'vsphere' and (delete_cluster | bool) }

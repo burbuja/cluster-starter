@@ -12,8 +12,9 @@
   vars:
     cc_action: "upload"
   roles:
+    - { role: hyperv_ssh, when: cc_hypervisor == 'hyperv_ssh' }
     - { role: pve_ssh, when: cc_hypervisor == 'pve_ssh' }
-- name: "Create VMs"
+- name: "Create VM"
   hosts: "all"
   gather_facts: no
   serial: 1
@@ -21,10 +22,18 @@
     cc_action: "create"
   roles:
     - { role: pve_ssh, when: cc_hypervisor == 'pve_ssh' }
-- name: "Create VMs"
+- name: "Modify VM"
+  hosts: "all"
+  gather_facts: no
+  vars:
+    cc_action: "modify"
+  roles:
+    - { role: pve_ssh, when: cc_hypervisor == 'pve_ssh' }
+- name: "Create VM"
   hosts: "all"
   gather_facts: no
   vars:
     cc_action: "create"
   roles:
+    - { role: hyperv_ssh, when: cc_hypervisor == 'hyperv_ssh' }
     - { role: vsphere, when: cc_hypervisor == 'vsphere' }

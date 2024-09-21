@@ -1,0 +1,10 @@
+---
+- name: "Power on VM on Hyper-V server"
+  ansible.windows.win_powershell:
+    script: |
+      param(
+          [string]$VMName
+      )
+      Start-VM -Name $VMName
+    parameters:
+      VMName: "{{ inventory_hostname }}"

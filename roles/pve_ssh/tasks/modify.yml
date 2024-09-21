@@ -22,7 +22,7 @@
       dest: "/var/lib/vz/snippets/{{ inventory_hostname }}_meta-data.yml"
     - src: "templates/user-data.j2"
       dest: "/var/lib/vz/snippets/{{ inventory_hostname }}_user-data.yml"
-- name: "Create CD-ROM for cloud-init"
+- name: "Create ISO file for cloud-init"
   ansible.builtin.shell:
     cmd: "qm set {{ vm_id }} --ide2 {{ vm_datastore }}:cloudinit"
 - name: "Set cloud-init"

@@ -1,4 +1,4 @@
 ---
-- name: "Power on VMs on PVE server"
+- name: "Power on VM on PVE server"
   ansible.builtin.shell:
     cmd: "qm start {{ vm_id }}"

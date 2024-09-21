@@ -1,0 +1,9 @@
+---
+- name: "Get the value of $Env:TEMP"
+  ansible.windows.win_shell: echo $Env:TEMP
+  register: temp_dir
+- name: "Upload Ubuntu to Hyper-V server"
+  ansible.windows.win_copy:
+    src: "{{ ubuntu_vhdx_local_path }}"
+    dest: "{{ temp_dir.stdout_lines[0] }}"
+  register: ubuntu_vhdx_remote

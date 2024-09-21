@@ -2,7 +2,7 @@ local-hostname: {{ inventory_hostname }}
 network:
   version: 2
   ethernets:
-    {% if cc_hypervisor == 'vsphere' %}ens192{% elif cc_hypervisor == 'pve_ssh' %}ens18{% endif %}:
+    {% if cc_hypervisor == 'vsphere' %}ens192{% elif cc_hypervisor == 'pve_ssh' %}ens18{% else %}eth0{% endif %}:
       dhcp4: False
       dhcp6: False
       addresses:
@@ -11,7 +11,7 @@ network:
       nameservers:
         addresses: [{{ vm_dns_0 }}]
 {% if hostvars[inventory_hostname].ansible_host != hostvars[inventory_hostname].ip %}
-    {% if cc_hypervisor == 'vsphere' %}ens224{% elif cc_hypervisor == 'pve_ssh' %}ens19{% endif %}:
+    {% if cc_hypervisor == 'vsphere' %}ens224{% elif cc_hypervisor == 'pve_ssh' %}ens19{% else %}eth1{% endif %}:
       dhcp4: False
       dhcp6: False
       addresses:

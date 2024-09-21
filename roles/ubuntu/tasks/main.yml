@@ -5,6 +5,7 @@
     ubuntu_ova_local_path: "files/{{ ubuntu_version }}-server-cloudimg-amd64.ova"
     ubuntu_img_remote_path: "https://cloud-images.ubuntu.com/{{ ubuntu_version }}/current/{{ ubuntu_version }}-server-cloudimg-amd64.img"
     ubuntu_img_local_path: "files/{{ ubuntu_version }}-server-cloudimg-amd64.img"
+    ubuntu_vhdx_local_path: "files/{{ ubuntu_version }}-server-cloudimg-amd64.vhdx"
 - name: "Donwload Ubuntu"
   include_tasks: download.yml
-  when: cc_action == "download"
+  when: cc_action == 'download'

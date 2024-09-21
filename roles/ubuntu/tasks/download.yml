@@ -1,9 +1,18 @@
 ---
-- name: Create a directory for files
+- name: "Create a directory for files"
   ansible.builtin.file:
     path: files
     state: directory
-- name: Download Ubuntu if necessary
+- name: "Download Ubuntu if necessary"
   ansible.builtin.get_url:
     url: "{{ ubuntu_ova_remote_path }}"
     dest: "{{ ubuntu_ova_local_path }}"
+  when: cc_hypervisor == 'vsphere'
+- name: "Download Ubuntu if necessary"
+  ansible.builtin.get_url:
+    url: "{{ ubuntu_img_remote_path }}"
+    dest: "{{ ubuntu_img_local_path }}"
+  when: cc_hypervisor == 'hyperv_ssh' or cc_hypervisor == 'pve_ssh'
+- name: "Convert Ubuntu image from QCOW2 to VHDX"
+  ansible.builtin.command: qemu-img convert -f qcow2 {{ ubuntu_img_local_path }} -O vhdx -o subformat=dynamic {{ ubuntu_vhdx_local_path }}
+  when: cc_hypervisor == 'hyperv_ssh'

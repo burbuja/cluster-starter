@@ -2,7 +2,7 @@
 
 ### Description
 
-These Ansible playbooks are intended to create, power on, power off and delete Kubernetes clusters on Proxmox VE and VMware vSphere. They're compatible with Kubespray inventories.
+These Ansible playbooks are intended to create, power on, power off and delete Kubernetes clusters on Microsoft Hyper-V, Proxmox VE and VMware vSphere. They're compatible with inventories from Kubespray.
 
 ### Important Notes
 
@@ -24,8 +24,8 @@ python3 -m venv venv
 source venv/bin/activate
 
 # Clone Cluster Starter and Kubespray repositories
-git clone --single-branch --branch v0.2.1 https://github.com/burbuja/cluster-starter.git
-git clone --single-branch --branch v2.24.0 https://github.com/kubernetes-sigs/kubespray.git
+git clone --single-branch --branch v0.3.0 https://github.com/burbuja/cluster-starter.git
+git clone --single-branch --branch v2.24.3 https://github.com/kubernetes-sigs/kubespray.git
 
 # Install requirements
 pip install -U -r kubespray/requirements.txt
@@ -93,10 +93,18 @@ ansible-playbook -i ../kubespray/inventory/mycluster/hosts.yml rook-patch.yml --
 ### Hypervisor
 cc_hypervisor: pve_ssh # pve_ssh or vsphere
 
+### Uncomment and fill the following lines in case of cc_hypervisor: hyperv_ssh
+# hyperv_host: 
+# hyperv_user: Administrator
+# hyperv_pass: changeme
+# vm_datastore: C:\Users\Public\Documents\Hyper-V\Virtual Hard Disks
+# vm_network_0: Default Switch
+# # vm_network_1: Kubernetes # (optional)
+
 ### Uncomment and fill the following lines in case of cc_hypervisor: pve_ssh
 # pve_host: 
 # pve_user: root
-# pve_pass: 
+# pve_pass: changeme
 # vm_datastore: local-lvm
 # vm_network_0: vmbr0
 # # vm_network_1: vmbr1 # (optional)

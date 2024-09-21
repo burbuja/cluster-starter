@@ -5,5 +5,6 @@
   vars:
     cc_action: "poweron"
   roles:
-    - { role: vsphere, when: cc_hypervisor == 'vsphere' }
+    - { role: hyperv_ssh, when: cc_hypervisor == 'hyperv_ssh' }
     - { role: pve_ssh, when: cc_hypervisor == 'pve_ssh' }
+    - { role: vsphere, when: cc_hypervisor == 'vsphere' }

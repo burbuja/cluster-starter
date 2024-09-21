@@ -1,0 +1,37 @@
+---
+- name: "Delete VM on Hyper-V server"
+  ansible.windows.win_powershell:
+    script: |
+      param(
+          [string]$VMName
+      )
+      Remove-VM -Name $VMName -Force
+    parameters:
+      VMName: "{{ inventory_hostname }}"
+- name: "Delete ISO on Hyper-V server"
+  ansible.windows.win_powershell:
+    script: |
+      param(
+          [string]$VMDvdDrivePath
+      )
+      Remove-Item $VMDvdDrivePath
+    parameters:
+      VMDvdDrivePath: "{{ vm_datastore }}\\{{ inventory_hostname }}_cidata.iso"
+- name: "Delete VHDX on Hyper-V server"
+  ansible.windows.win_powershell:
+    script: |
+      param(
+          [string]$VHDPath
+      )
+      Remove-Item $VHDPath
+    parameters:
+      VHDPath: "{{ vm_datastore }}\\{{ inventory_hostname }}.vhdx"
+- name: "Delete secondary VHD on Hyper-V server"
+  ansible.windows.win_powershell:
+    script: |
+      param(
+          [string]$VHDPath
+      )
+      Remove-Item $VHDPath
+    parameters:
+      VHDPath: "{{ vm_datastore }}\\{{ inventory_hostname }}_1.vhdx"

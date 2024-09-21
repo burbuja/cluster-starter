@@ -1,5 +1,5 @@
 ---
-- name: "Create VMs on vSphere"
+- name: "Create VM on vSphere"
   include_tasks: "create.yml"
   vars:
     cc_os_user: "{{ ansible_user }}"
@@ -8,19 +8,19 @@
     apply:
       delegate_to: "localhost"
   when: cc_action == "create"
-- name: "Power on VMs on vSphere"
+- name: "Power on VM on vSphere"
   include_tasks: "poweron.yml"
   args:
     apply:
       delegate_to: "localhost"
   when: cc_action == "poweron" or cc_action == "create"
-- name: "Power off VMs on vSphere"
+- name: "Power off VM on vSphere"
   include_tasks: "poweroff.yml"
   args:
     apply:
       delegate_to: "localhost"
   when: cc_action == "poweroff" or cc_action == "delete"
-- name: "Delete VMs on vSphere"
+- name: "Delete VM on vSphere"
   include_tasks: "delete.yml"
   args:
     apply:

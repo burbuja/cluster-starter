@@ -1,0 +1,65 @@
+---
+- name: "Upload file to Hyper-V server"
+  include_tasks: upload.yml
+  vars:
+    ansible_user: "{{ hyperv_user }}"
+    ansible_ssh_pass: "{{ hyperv_pass }}"
+    ansible_connection: "ssh"
+    ansible_shell_type: "cmd"
+  args:
+    apply:
+      delegate_to: "{{ hyperv_host }}"
+  when: cc_action == "upload"
+- name: "Create cloud-init ISO"
+  include_tasks: ci.yml
+  vars:
+    cc_os_user: "{{ ansible_user }}"
+    cc_os_pass: "{{ ansible_ssh_pass }}"
+  args:
+    apply:
+      delegate_to: "localhost"
+  when: cc_action == "create"
+- name: "Create VM on Hyper-V server"
+  include_tasks: create.yml
+  vars:
+    ansible_user: "{{ hyperv_user }}"
+    ansible_ssh_pass: "{{ hyperv_pass }}"
+    ansible_connection: "ssh"
+    ansible_shell_type: "cmd"
+  args:
+    apply:
+      delegate_to: "{{ hyperv_host }}"
+  when: cc_action == "create"
+- name: "Power on VM on Hyper-V server"
+  include_tasks: poweron.yml
+  vars:
+    ansible_user: "{{ hyperv_user }}"
+    ansible_ssh_pass: "{{ hyperv_pass }}"
+    ansible_connection: "ssh"
+    ansible_shell_type: "cmd"
+  args:
+    apply:
+      delegate_to: "{{ hyperv_host }}"
+  when: cc_action == "poweron" or cc_action == "create"
+- name: "Power off VM on Hyper-V server"
+  include_tasks: poweroff.yml
+  vars:
+    ansible_user: "{{ hyperv_user }}"
+    ansible_ssh_pass: "{{ hyperv_pass }}"
+    ansible_connection: "ssh"
+    ansible_shell_type: "cmd"
+  args:
+    apply:
+      delegate_to: "{{ hyperv_host }}"
+  when: cc_action == "poweroff" or cc_action == "delete"
+- name: "Delete VM on Hyper-V server"
+  include_tasks: delete.yml
+  vars:
+    ansible_user: "{{ hyperv_user }}"
+    ansible_ssh_pass: "{{ hyperv_pass }}"
+    ansible_connection: "ssh"
+    ansible_shell_type: "cmd"
+  args:
+    apply:
+      delegate_to: "{{ hyperv_host }}"
+  when: cc_action == "delete"

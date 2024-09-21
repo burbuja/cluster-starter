@@ -1,5 +1,5 @@
 ---
-- name: "Power on VMs on vSphere"
+- name: "Power on VM on vSphere"
   community.vmware.vmware_guest:
     hostname: "{{ external_vsphere_vcenter_ip }}"
     username: "{{ external_vsphere_user }}"

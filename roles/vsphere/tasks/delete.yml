@@ -1,5 +1,5 @@
 ---
-- name: "Delete VMs on vSphere"
+- name: "Delete VM on vSphere"
   community.vmware.vmware_guest:
     hostname: "{{ external_vsphere_vcenter_ip }}"
     username: "{{ external_vsphere_user }}"

@@ -1,0 +1,31 @@
+---
+- name: "Create a temporary directory for files"
+  ansible.builtin.file:
+    path: "files/tmp/{{ inventory_hostname }}"
+    state: "directory"
+- name: "Copy cloud-init files"
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - src: "templates/meta-data.j2"
+      dest: "files/tmp/{{ inventory_hostname }}/meta-data"
+    - src: "templates/meta-data.j2"
+      dest: "files/tmp/{{ inventory_hostname }}/network-config"
+    - src: "templates/user-data.j2"
+      dest: "files/tmp/{{ inventory_hostname }}/user-data"
+- name: "Create cloud-init ISO"
+  community.general.iso_create:
+    src_files:
+      - "files/tmp/{{ inventory_hostname }}/meta-data"
+      - "files/tmp/{{ inventory_hostname }}/network-config"
+      - "files/tmp/{{ inventory_hostname }}/user-data"
+    dest_iso: "files/{{ inventory_hostname }}_cidata.iso"
+    interchange_level: "4"
+    vol_ident: "cidata"
+    joliet: "3"
+    rock_ridge: "1.09"
+- name: "Delete a temporary directory for files"
+  ansible.builtin.file:
+    path: "files/tmp/{{ inventory_hostname }}"
+    state: "absent"

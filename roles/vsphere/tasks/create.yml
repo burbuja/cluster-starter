@@ -9,10 +9,10 @@
     networks:
       "{u'VM Network':u'{{ vm_network_0 }}'}"
     datastore: "{{ vm_datastore }}"
-    ovf: "{{ ubuntu_ova_local_path }}"
+    ovf: "{{ hostvars['localhost']['ubuntu_ova_local_path'] }}"
     power_on: no
     wait_for_ip_address: no
-- name: "Change VMs settings"
+- name: "Change VM settings"
   community.vmware.vmware_guest:
     hostname: "{{ external_vsphere_vcenter_ip }}"
     username: "{{ external_vsphere_user }}"
@@ -48,7 +48,7 @@
       scsi_controller: 0
       scsi_type: paravirtual
       unit_number: 1
-  when: "vm_disk_size_gb_1 is set"
+  when: "vm_disk_size_gb_1 is defined"
 - name: "Add a new NIC to VM"
   community.vmware.vmware_guest_network:
     hostname: "{{ external_vsphere_vcenter_ip }}"
