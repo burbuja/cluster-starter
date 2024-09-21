@@ -91,7 +91,7 @@ ansible-playbook -i ../kubespray/inventory/mycluster/hosts.yml rook-patch.yml --
 
 ```yaml
 ### Hypervisor
-cc_hypervisor: pve_ssh # pve_ssh or vsphere
+cc_hypervisor: hyperv_ssh # hyperv_ssh, pve_ssh or vsphere
 
 ### Uncomment and fill the following lines in case of cc_hypervisor: hyperv_ssh
 # hyperv_host: 
